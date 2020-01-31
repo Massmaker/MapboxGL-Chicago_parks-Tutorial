@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import mapboxgl, {Map} from 'mapbox-gl';
+import mapboxgl, {Map, Popup} from 'mapbox-gl';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaXZhbnlhdm9yaW4iLCJhIjoiY2s2MG9uN28xMDlnejNqbG9na25qdG82dCJ9.8zu4rjJ4HupNnNmKuIz7Yg';
 
@@ -28,6 +28,27 @@ class Application extends React.Component {
             // pitch: this.state.pitch,
             // rotation: this.state.rotation,
         });
+
+        map.on('click', (event) => {
+            let features = map.queryRenderedFeatures(event.point, {
+                layers: ['chicago-parks']
+            });
+
+            if (!features.length) {
+                return;
+            }
+
+            let feature = features[0];
+            let title = feature.properties.title;
+            let description = feature.properties.description;
+
+            let popup = new Popup({ offset: [0, -15] })
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML('<h3>' + title + '</h3><p>' + description + '</p>');
+
+             popup.addTo(map);
+
+        })
 
     }
 
